@@ -10,3 +10,6 @@
 # Undo-tree save-files
 *.~undo-tree
 /elpa/
+/history
+/ido.last
+/transient/
