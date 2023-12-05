@@ -25,10 +25,13 @@
                       better-defaults
                       company
 		      exec-path-from-shell
+                      lsp-mode
+                      lsp-ui
 		      magit
                       markdown-mode
 		      modus-themes
                       pet
+                      projectile
 		      )
   "A list of packages to ensure are installed at launch.")
 
@@ -137,19 +140,39 @@
 (setq backup-directory-alist
           `((".*" . ,temporary-file-directory)))
 
+;; Projectile (project support) installation. Note: somewhere below I
+;; also map the projectile prefix key to F5-p.
+(use-package projectile
+  :init
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+              ("C-c C-p" . projectile-command-map)))
+
 ;; Python configuration.
 (use-package python
   :config
-  (require 'eglot)
   (setq python-check-command "ruff")
-  (add-hook 'python-mode-hook #'flymake-mode)
-  (add-hook 'python-ts-mode-hook #'flymake-mode)
-  ;;(add-to-list 'eglot-server-programs '((python-mode python-ts-mode) "ruff-lsp"))
+  (add-hook 'python-base-mode-hook #'flymake-mode)
   )
 
 ;; Enable the automatic use-the-venv mechanism of `pet-mode' on
 ;; `python-mode' and `python-ts-mode'.
-(add-hook 'python-base-mode-hook 'pet-mode -10)
+(use-package pet
+  :ensure-system-package (dasel)
+  :config
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
+
+;; LSP mode
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (python-base-mode . lsp)
+         ;; if you want which-key integration
+         ;; (lsp-mode . lsp-enable-which-key-integration)
+         )
+  :commands lsp)
 
 ;; Handy f5-shortcuts
 (define-prefix-command 'reinout-bindings-keymap)
@@ -158,7 +181,7 @@
 (define-key reinout-bindings-keymap (vector ?f) 'auto-fill-mode)
 (define-key reinout-bindings-keymap (vector ?g) 'magit-status)
 ;(define-key reinout-bindings-keymap (vector ?j) 'jslint-thisfile)
-;(define-key reinout-bindings-keymap (vector ?p) 'projectile-command-map)
+(define-key reinout-bindings-keymap (vector ?p) 'projectile-command-map)
 (define-key reinout-bindings-keymap (vector ?s) 'sort-lines)
 ;(define-key reinout-bindings-keymap (vector ?t) 'treemacs)
 (define-key reinout-bindings-keymap (vector ?u) 'unfill-paragraph)
