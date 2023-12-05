@@ -28,6 +28,7 @@
 		      magit
                       markdown-mode
 		      modus-themes
+                      pet
 		      )
   "A list of packages to ensure are installed at launch.")
 
@@ -143,8 +144,12 @@
   (setq python-check-command "ruff")
   (add-hook 'python-mode-hook #'flymake-mode)
   (add-hook 'python-ts-mode-hook #'flymake-mode)
-  ;; (add-to-list 'eglot-server-programs '((python-mode python-ts-mode) "ruff-lsp"))
+  ;;(add-to-list 'eglot-server-programs '((python-mode python-ts-mode) "ruff-lsp"))
   )
+
+;; Enable the automatic use-the-venv mechanism of `pet-mode' on
+;; `python-mode' and `python-ts-mode'.
+(add-hook 'python-base-mode-hook 'pet-mode -10)
 
 ;; Handy f5-shortcuts
 (define-prefix-command 'reinout-bindings-keymap)
