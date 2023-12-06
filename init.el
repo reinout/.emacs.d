@@ -26,12 +26,14 @@
                       company
 		      exec-path-from-shell
                       lsp-mode
+                      lsp-pyright
                       lsp-ui
 		      magit
                       markdown-mode
 		      modus-themes
                       pet
                       projectile
+                      python-pytest
 		      )
   "A list of packages to ensure are installed at launch.")
 
@@ -173,6 +175,11 @@
          ;; (lsp-mode . lsp-enable-which-key-integration)
          )
   :commands lsp)
+
+(use-package lsp-pyright
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))  ; or lsp-deferred
 
 ;; Handy f5-shortcuts
 (define-prefix-command 'reinout-bindings-keymap)
