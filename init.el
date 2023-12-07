@@ -7,79 +7,187 @@
 ;; URL: https://github.com/reinout/.emacs.d/
 
 ;;; Commentary:
-;; TODO
+;; See the readme.
 
 ;;; Code:
 
-;; Use the build-in package system.
-(require 'package)
-;; Don't start every package right away.
+;; Don't start every (previously installed) package right away.
 (setq package-enable-at-startup nil)
+;; Use the standard melpa archive, too.
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
-
-;; List of packages that I use. A really important one is the
-;; "better-defaults" one, with really useful small customizations.
-(defvar my-packages '(ag
-                      better-defaults
-                      company
-		      exec-path-from-shell
-                      lsp-mode
-                      lsp-pyright
-                      lsp-ui
-		      magit
-                      markdown-mode
-		      modus-themes
-                      pet
-                      projectile
-                      python-pytest
-		      )
-  "A list of packages to ensure are installed at launch.")
-
-;; Commands suggested by the Emacs starter kit to keep its packages up
-;; to date.
+;; Download package info when it didn't happen yet.
 (when (not package-archive-contents)
   (package-refresh-contents))
-(dolist (p my-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
+
+
+;; better-defaults is the set of nicer settings that previously was
+;; part of the "emacs starter kit".
+(use-package better-defaults
+  :ensure t
+  :init
+  ; first start fido, otherwise ido already gets started.
+  (fido-vertical-mode)
+  )
 
 ;; exec-path-from-shell ensures the $PATH is set just like in your
-;; terminal. This helps finding pipx-installed tools.
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
+;; terminal. This helps finding pipx-installed tools when starting
+;; emacs from your OS
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize)
+  )
 
-;; TODO: look at possible font settings.
+;; Start the server so I can use emacsclient.
+(use-package server
+  :if window-system
+  :init
+  (server-start)
+  ;; Maximize screen when starting up.
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  )
 
-;; Theme settings
-(require 'modus-themes)
-(load-theme 'modus-vivendi-tinted :no-confirm)
-(setq modus-themes-italic-constructs t
-      modus-themes-bold-constructs t
-      )
+;; Theme settings. I kinda like this dark theme (there's a white
+;; version, too, btw).
+(use-package modus-themes
+  :ensure t
+  :config
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs t)
+  (load-theme 'modus-vivendi-tinted :no-confirm)
+  )
 
 ;; No escape codes but colors when calling, for instance, 'ruff' in
 ;; ctrl-c ctrl-v.
-(require 'ansi-color)
-(add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
+(use-package ansi-color
+  :hook (compilation-filter . ansi-color-compilation-filter)
+  )
 
 ;; Nicer, smoother scrolling.
-(pixel-scroll-mode)
-(pixel-scroll-precision-mode 1)
-(setq pixel-scroll-precision-large-scroll-height 35.0)
+(use-package pixel-scroll
+  :config
+  (pixel-scroll-precision-mode 1)
+  (setq pixel-scroll-precision-large-scroll-height 35.0)
+  )
 
-;; Maximize screen.
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;; Handy for visually wrapping lines on the fill column instead of at
+;; the end of the screen in case a colleague has written a readme with
+;; really long lines. I've configured visual-line-mode as "ctrl-c v".
+(use-package visual-fill-column
+  :ensure t
+  :config
+  (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
+  :bind ("C-c v" . visual-line-mode)
+  )
+
+;; Useful for working with abovementioned colleague-written README
+;; files with long lines, "ctrl-c u" restores the long line if I've
+;; accidentally filled it.
+;; Included in this package config is my "ctrl-c f" toggle for
+;; auto-fill-mode.
+(use-package unfill
+  :ensure t
+  :bind (("C-c u" . unfill-paragraph)
+         ("C-c f" . auto-fill-mode))
+  )
+
+;; Projectile (project support) installation.
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode 1)
+  :bind-keymap ("C-c p" . projectile-command-map)
+  )
+
+;; A better version of the build-in flymake
+(use-package flycheck
+  :ensure t
+  :config
+  (global-flycheck-mode)
+  )
+
+;; Show available key bindings.
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode)
+  )
+
+;; ag is a really nice grep variant. "ctrl-c a" greps inside the
+;; current project.
+(use-package ag
+  :ensure t
+  :bind ("C-c a" . ag-project)
+  )
+
+;; Really nice and powerful git integration.
+(use-package magit
+  :ensure t
+  :bind ("C-c g" . magit-status)
+  )
+
+;; Python configuration.
+(use-package python
+  :config
+  (setq python-check-command "ruff")
+  )
+
+;; Enable the automatic use-the-venv mechanism of `pet-mode' on
+;; `python-mode' and `python-ts-mode'.
+(use-package pet
+  :ensure t
+  :ensure-system-package (dasel)
+  :config
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
+
+;; Easy pytest runner. Depends on PET to configure the binary.
+(use-package python-pytest
+  :ensure t
+  :bind ("C-c t" . python-pytest)
+  )
+
+;; COMplete ANYthing. Integrates with LSP, but can also be used
+;; outside it.
+(use-package company
+  :ensure t
+  :bind ("C-c c" . company-mode)
+  )
+
+;; The main LSP-enabling mode
+(use-package lsp-mode
+  :ensure t
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  (setq gc-cons-threshold 100000000)
+  (setq read-process-output-max (* 1024 1024))
+  :hook ((python-base-mode . lsp)
+         )
+  :commands lsp)
+
+;; Integrate microsoft's pyright analyzer into LSP.
+;; TODO: perhaps make this optional?
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp)))
+  )
+
+;; lsp-ui is the standard UI layer of lsp-mode. It gets used
+;; automatically when available.
+(use-package lsp-ui
+  :ensure t
+  )
+
+
 
 ;; Stop ringing the bell
 (setq ring-bell-function 'ignore)
 
 ;; Change yes/no questions to y/n
 (setq use-short-answers t)
-
-;; Start the server so I can use emacsclient
-(server-start)
 
 ;; Don't let minified javascript (with its super-long lines) bring
 ;; emacs to a grinding halt.
@@ -93,7 +201,9 @@
 (setq confirm-kill-emacs 'yes-or-no-p)
 
 ;; Indent with spaces instead of tabs by default. Normally the major
-;; mode sets it, but I've been bitten by tabs in some rare cases.
+;; mode sets it, but I've been bitten by tabs in some rare
+;; cases. Makefile-mode correctly uses tabs, which is the only place
+;; where I need them.
 (setq-default indent-tabs-mode nil)
 
 ;; Auto revert mode: automatically reload the buffer when the
@@ -106,9 +216,6 @@
 (add-hook 'prog-mode-hook #'hl-line-mode)
 (add-hook 'text-mode-hook #'hl-line-mode)
 
-;; Always turn on flymake when programming. TODO: also for markdown?
-(add-hook 'prog-mode-hook #'flymake-mode)
-
 ;; Zap trailing whitespace.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
@@ -116,18 +223,22 @@
 ;; (until the first error).
 (setq compilation-scroll-output 'first-error)
 
-;; ;; Completion. One column, max 15 lines.
-;; (setq completions-format 'one-column)
-;; (setq completions-max-height 15)
-;; ;; Config for the new emacs 29+ completion
-;; (setq completion-auto-help 'lazy
-;;         completion-auto-select 'second-tab
-;;         completion-show-help nil
-;;         completions-sort nil
-;;         completions-header-format nil)
+;; Place the something~ backup files in the temp dir.
+(setq backup-directory-alist
+          `((".*" . ,temporary-file-directory)))
 
-;; Easy ido-style completion.
-(fido-vertical-mode)
+
+;; Handy ctrl-c shortcuts. ctrl-c is intended for shortcuts like this.
+(define-prefix-command 'reinout-bindings-keymap)
+;(define-key reinout-bindings-keymap (vector ?d) 'deft)
+;(define-key reinout-bindings-keymap (vector ?j) 'jslint-thisfile)
+(define-key reinout-bindings-keymap (vector ?s) 'sort-lines)
+;(define-key reinout-bindings-keymap (vector ?t) 'treemacs)
+(global-set-key [(f5)] 'reinout-bindings-keymap)
+
+
+
+
 
 ;; c-x k now directly kills the *current* buffer instead of asking you for the
 ;; name of a buffer to kill
@@ -138,64 +249,7 @@
   (kill-buffer (current-buffer)))
 (global-set-key (kbd "C-x k") 'bjm/kill-this-buffer)
 
-;; Place the something~ backup files in the temp dir.
-(setq backup-directory-alist
-          `((".*" . ,temporary-file-directory)))
 
-;; Projectile (project support) installation. Note: somewhere below I
-;; also map the projectile prefix key to F5-p.
-(use-package projectile
-  :init
-  (projectile-mode +1)
-  :bind (:map projectile-mode-map
-              ("C-c C-p" . projectile-command-map)))
-
-;; Python configuration.
-(use-package python
-  :config
-  (setq python-check-command "ruff")
-  (add-hook 'python-base-mode-hook #'flymake-mode)
-  )
-
-;; Enable the automatic use-the-venv mechanism of `pet-mode' on
-;; `python-mode' and `python-ts-mode'.
-(use-package pet
-  :ensure-system-package (dasel)
-  :config
-  (add-hook 'python-base-mode-hook 'pet-mode -10))
-
-;; LSP mode
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (python-base-mode . lsp)
-         ;; if you want which-key integration
-         ;; (lsp-mode . lsp-enable-which-key-integration)
-         )
-  :commands lsp)
-
-(use-package lsp-pyright
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp))))  ; or lsp-deferred
-
-;; Handy f5-shortcuts
-(define-prefix-command 'reinout-bindings-keymap)
-(define-key reinout-bindings-keymap (vector ?a) 'ag-project)
-;(define-key reinout-bindings-keymap (vector ?d) 'deft)
-(define-key reinout-bindings-keymap (vector ?f) 'auto-fill-mode)
-(define-key reinout-bindings-keymap (vector ?g) 'magit-status)
-;(define-key reinout-bindings-keymap (vector ?j) 'jslint-thisfile)
-(define-key reinout-bindings-keymap (vector ?p) 'projectile-command-map)
-(define-key reinout-bindings-keymap (vector ?s) 'sort-lines)
-;(define-key reinout-bindings-keymap (vector ?t) 'treemacs)
-(define-key reinout-bindings-keymap (vector ?u) 'unfill-paragraph)
-(global-set-key [(f5)] 'reinout-bindings-keymap)
-
-;; http://koansys.com/tech/emacs-hangs-on-flymake-under-os-x
-(setq flymake-gui-warnings-enabled nil)
 
 ;; Have customize write its stuff to a separate file.
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
