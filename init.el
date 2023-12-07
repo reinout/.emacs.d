@@ -162,17 +162,17 @@
   (setq lsp-keymap-prefix "C-c l")
   (setq gc-cons-threshold 100000000)
   (setq read-process-output-max (* 1024 1024))
-  :hook ((python-base-mode . lsp)
-         )
+  ; :hook ((python-base-mode . lsp)
+  ;        )
   :commands lsp)
 
 ;; Integrate microsoft's pyright analyzer into LSP.
 ;; TODO: perhaps make this optional?
 (use-package lsp-pyright
   :ensure t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp)))
+  ;; :hook (python-mode . (lambda ()
+  ;;                        (require 'lsp-pyright)
+  ;;                        (lsp)))
   )
 
 ;; lsp-ui is the standard UI layer of lsp-mode. It gets used
