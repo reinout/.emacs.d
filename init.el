@@ -94,9 +94,26 @@
   )
 
 (defun projectile-reinout-test ()
+  "Run github.com/reinout/tools/shell/projectile-test in the project root"
   (interactive)
   (projectile-with-default-dir (projectile-acquire-root)
     (compile "projectile-test")
+    )
+  )
+
+(defun projectile-reinout-check ()
+  "Run github.com/reinout/tools/shell/projectile-check in the project root"
+  (interactive)
+  (projectile-with-default-dir (projectile-acquire-root)
+    (compile "projectile-check")
+    )
+  )
+
+(defun projectile-reinout-beautiful ()
+  "Run github.com/reinout/tools/shell/projectile-beautiful in the project root"
+  (interactive)
+  (projectile-with-default-dir (projectile-acquire-root)
+    (compile "projectile-beautiful")
     )
   )
 
@@ -114,6 +131,8 @@
   ;;        )
   ;; Handy short keystrokes
   :bind (("C-c t" . projectile-reinout-test)
+         ("C-c c" . projectile-reinout-check)
+         ("C-c b" . projectile-reinout-beautiful)
          )
   :custom
   (projectile-switch-project-action 'projectile-dired "Open root dir")
@@ -158,7 +177,8 @@
 ;; outside it.
 (use-package company
   :ensure t
-  :bind ("C-c c" . company-mode)
+  :config
+  (global-company-mode t)
   )
 
 ;; LSP through eglot
