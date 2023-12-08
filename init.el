@@ -93,20 +93,39 @@
          ("C-c f" . auto-fill-mode))
   )
 
+(defun projectile-reinout-test ()
+  (interactive)
+  (projectile-with-default-dir (projectile-acquire-root)
+    (compile "projectile-test")
+    )
+  )
+
+
 ;; Projectile (project support) installation.
 (use-package projectile
   :ensure t
   :init
   (projectile-mode 1)
+  :config
+  (setq projectile-test-cmd "projectile-test")
   :bind-keymap ("C-c p" . projectile-command-map)
+  ;; Adjustments
+  ;; :bind (("C-c p p" . projectile-switch-open-project)
+  ;;        )
+  ;; Handy short keystrokes
+  :bind (("C-c t" . projectile-reinout-test)
+         )
+  :custom
+  (projectile-switch-project-action 'projectile-dired "Open root dir")
+  (projectile-mode-line-prefix "P" "Shorter prefix")
   )
 
-;; A better version of the build-in flymake
-(use-package flycheck
-  :ensure t
-  :config
-  (global-flycheck-mode)
-  )
+;; ;; A better version of the build-in flymake
+;; (use-package flycheck
+;;   :ensure t
+;;   :config
+;;   (global-flycheck-mode)
+;;   )
 
 ;; Show available key bindings.
 (use-package which-key
@@ -132,20 +151,7 @@
 (use-package python
   :config
   (setq python-check-command "ruff")
-  )
-
-;; Enable the automatic use-the-venv mechanism of `pet-mode' on
-;; `python-mode' and `python-ts-mode'.
-(use-package pet
-  :ensure t
-  :ensure-system-package (dasel)
-  :config
-  (add-hook 'python-base-mode-hook 'pet-mode -10))
-
-;; Easy pytest runner. Depends on PET to configure the binary.
-(use-package python-pytest
-  :ensure t
-  :bind ("C-c t" . python-pytest)
+  (add-hook 'python-base-mode-hook 'eglot-ensure)
   )
 
 ;; COMplete ANYthing. Integrates with LSP, but can also be used
@@ -155,32 +161,16 @@
   :bind ("C-c c" . company-mode)
   )
 
-;; The main LSP-enabling mode
-(use-package lsp-mode
-  :ensure t
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  (setq gc-cons-threshold 100000000)
-  (setq read-process-output-max (* 1024 1024))
-  ; :hook ((python-base-mode . lsp)
-  ;        )
-  :commands lsp)
-
-;; Integrate microsoft's pyright analyzer into LSP.
-;; TODO: perhaps make this optional?
-(use-package lsp-pyright
-  :ensure t
-  ;; :hook (python-mode . (lambda ()
-  ;;                        (require 'lsp-pyright)
-  ;;                        (lsp)))
+;; LSP through eglot
+(use-package eglot
+  :bind (("C-c l c" . eglot-reconnect)
+         ("C-c l d" . flymake-show-buffer-diagnostics)
+         ("C-c l f f" . eglot-format)
+         ("C-c l f b" . eglot-format-buffer)
+         ("C-c l l" . eglot)
+         ("C-c l r n" . eglot-rename)
+         ("C-c l s" . eglot-shutdown))
   )
-
-;; lsp-ui is the standard UI layer of lsp-mode. It gets used
-;; automatically when available.
-(use-package lsp-ui
-  :ensure t
-  )
-
 
 
 ;; Stop ringing the bell
