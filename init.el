@@ -93,6 +93,25 @@
          ("C-c f" . auto-fill-mode))
   )
 
+;; Let flymake use alt-n/alt-p for moving to the next/previous error.
+(use-package flymake
+  :bind (("M-n" . flymake-goto-next-error)
+         ("M-p" . flymake-goto-previous-error))
+  )
+
+;; Yasnippet library
+(use-package yasnippet-snippets
+  :ensure t
+  )
+
+;; Snippets (TODO: I need to add some of my own)
+(use-package yasnippet
+  :ensure t
+  :init
+  ;; add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
+  (yas-global-mode t)
+  )
+
 (defun projectile-reinout-test ()
   "Run github.com/reinout/tools/shell/projectile-test in the project root"
   (interactive)
@@ -138,13 +157,6 @@
   (projectile-switch-project-action 'projectile-dired "Open root dir")
   (projectile-mode-line-prefix "P" "Shorter prefix")
   )
-
-;; ;; A better version of the build-in flymake
-;; (use-package flycheck
-;;   :ensure t
-;;   :config
-;;   (global-flycheck-mode)
-;;   )
 
 ;; Show available key bindings.
 (use-package which-key
@@ -193,61 +205,58 @@
   )
 
 
-;; Stop ringing the bell
-(setq ring-bell-function 'ignore)
+;; Generic emacs configuration.
+(use-package emacs
+  :init
 
-;; Change yes/no questions to y/n
-(setq use-short-answers t)
+  ;; Stop ringing the bell
+  (setq ring-bell-function 'ignore)
 
-;; Don't let minified javascript (with its super-long lines) bring
-;; emacs to a grinding halt.
-(global-so-long-mode t)
+  ;; Change yes/no questions to y/n
+  (setq use-short-answers t)
 
-;; Save the "alt-x" history.
-(savehist-mode 1)
+  ;; Don't let minified javascript (with its super-long lines) bring
+  ;; emacs to a grinding halt.
+  (global-so-long-mode t)
 
-;; Don't accidentally exit emacs. Note: this means you have to
-;; manually exit emacs when doing a mac OS update.
-(setq confirm-kill-emacs 'yes-or-no-p)
+  ;; Save the "alt-x" history.
+  (savehist-mode 1)
 
-;; Indent with spaces instead of tabs by default. Normally the major
-;; mode sets it, but I've been bitten by tabs in some rare
-;; cases. Makefile-mode correctly uses tabs, which is the only place
-;; where I need them.
-(setq-default indent-tabs-mode nil)
+  ;; Don't accidentally exit emacs. Note: this means you have to
+  ;; manually exit emacs when doing a mac OS update.
+  (setq confirm-kill-emacs 'yes-or-no-p)
 
-;; Auto revert mode: automatically reload the buffer when the
-;; underlying file changes (for instance because you ran 'black' over
-;; some files. Also keep the directory listings up-to-date.
-(global-auto-revert-mode 1)
-(add-hook 'dired-mode-hook 'auto-revert-mode)
+  ;; Indent with spaces instead of tabs by default. Normally the major
+  ;; mode sets it, but I've been bitten by tabs in some rare
+  ;; cases. Makefile-mode correctly uses tabs, which is the only place
+  ;; where I need them.
+  (setq-default indent-tabs-mode nil)
 
-;; When regularly editing, show the current line lightly highlighted.
-(add-hook 'prog-mode-hook #'hl-line-mode)
-(add-hook 'text-mode-hook #'hl-line-mode)
+  ;; Auto revert mode: automatically reload the buffer when the
+  ;; underlying file changes (for instance because you ran 'black' over
+  ;; some files. Also keep the directory listings up-to-date.
+  (global-auto-revert-mode 1)
+  (add-hook 'dired-mode-hook 'auto-revert-mode)
 
-;; Zap trailing whitespace.
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+  ;; When regularly editing, show the current line lightly highlighted.
+  (add-hook 'prog-mode-hook #'hl-line-mode)
+  (add-hook 'text-mode-hook #'hl-line-mode)
 
-;; When running output is printed in some buffer, just follow along
-;; (until the first error).
-(setq compilation-scroll-output 'first-error)
+  ;; Zap trailing whitespace.
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-;; Place the something~ backup files in the temp dir.
-(setq backup-directory-alist
-          `((".*" . ,temporary-file-directory)))
+  ;; When running output is printed in some buffer, just follow along
+  ;; (until the first error).
+  (setq compilation-scroll-output 'first-error)
 
-
-;; Handy ctrl-c shortcuts. ctrl-c is intended for shortcuts like this.
-(define-prefix-command 'reinout-bindings-keymap)
-;(define-key reinout-bindings-keymap (vector ?d) 'deft)
-;(define-key reinout-bindings-keymap (vector ?j) 'jslint-thisfile)
-(define-key reinout-bindings-keymap (vector ?s) 'sort-lines)
-;(define-key reinout-bindings-keymap (vector ?t) 'treemacs)
-(global-set-key [(f5)] 'reinout-bindings-keymap)
+  ;; Place the something~ backup files in the temp dir.
+  (setq backup-directory-alist
+            `((".*" . ,temporary-file-directory)))
 
 
-
+  :bind (("C-c s" . sort-lines)
+         )
+  )
 
 
 ;; c-x k now directly kills the *current* buffer instead of asking you for the
@@ -258,7 +267,6 @@
   (interactive)
   (kill-buffer (current-buffer)))
 (global-set-key (kbd "C-x k") 'bjm/kill-this-buffer)
-
 
 
 ;; Have customize write its stuff to a separate file.
