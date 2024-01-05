@@ -104,6 +104,12 @@
   :ensure t
   )
 
+;; Yaml editing
+(use-package yaml-mode
+  :ensure t
+  :mode "\\.ya?ml\\'"
+  )
+
 ;; Snippets (TODO: I need to add some of my own)
 (use-package yasnippet
   :ensure t
@@ -204,6 +210,10 @@
          ("C-c l s" . eglot-shutdown))
   )
 
+;; Dockerfile
+(use-package dockerfile-mode
+  :ensure t
+  )
 
 ;; Generic emacs configuration.
 (use-package emacs

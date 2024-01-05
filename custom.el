@@ -8,7 +8,8 @@
  '(kill-whole-line t)
  '(package-selected-packages '(modus-themes magit exec-path-from-shell better-defaults))
  '(safe-local-variable-values
-   '((projectile-project-test-cmd . "make test")
+   '((projectile-project-compilation-cmd . "make install")
+     (projectile-project-test-cmd . "make test")
      (projectile-project-compilation-cmd . "make")
      (projectile-project-test-cmd . "bin/pytest")
      (projectile-project-compilation-cmd . "bin/pip install -r requirements.txt")
