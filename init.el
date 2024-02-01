@@ -77,7 +77,7 @@
 ;; really long lines. I've configured visual-line-mode as "ctrl-c v".
 (use-package visual-fill-column
   :ensure t
-  :config
+  :init
   (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
   :bind ("C-c v" . visual-line-mode)
   )
@@ -92,6 +92,13 @@
   :bind (("C-c u" . unfill-paragraph)
          ("C-c f" . auto-fill-mode))
   )
+
+;; I want to add editorconfig files to projects, so I have to use it
+;; myself, too.
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 
 ;; Let flymake use alt-n/alt-p for moving to the next/previous error.
 (use-package flymake
@@ -215,6 +222,22 @@
   :ensure t
   )
 
+(use-package terraform-mode
+  :ensure t
+  :config
+  (setq terraform-format-on-save t)
+  )
+
+(use-package arduino-mode
+  :ensure t
+  ;; Bind c-c t for easy compilation...
+  :bind (("C-c t" . compile))
+  :mode "\\.ino\\'"
+  :hook
+  (arduino-mode . (lambda ()
+                    (setq-local compile-command "make upload")))
+  )
+
 ;; Generic emacs configuration.
 (use-package emacs
   :init
@@ -228,6 +251,9 @@
   ;; Don't let minified javascript (with its super-long lines) bring
   ;; emacs to a grinding halt.
   (global-so-long-mode t)
+
+  ;; Set fill column to 88 instead of 70.
+  (setq-default fill-column 88)
 
   ;; Save the "alt-x" history.
   (savehist-mode 1)
