@@ -238,6 +238,12 @@
                     (setq-local compile-command "make upload")))
   )
 
+(use-package mermaid-mode
+  :ensure t
+  :mode "\\.mermaid\\'"
+  )
+
+
 ;; Generic emacs configuration.
 (use-package emacs
   :init
@@ -312,3 +318,4 @@
 
 (provide 'init.el)
 ;;; init.el ends here
+(put 'set-goal-column 'disabled nil)
