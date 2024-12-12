@@ -192,6 +192,13 @@
   :bind ("C-c a" . ag-project)
   )
 
+;; ripgrep uses rg instead of ag. "ctrl-c r" greps inside the current project (at least,
+;; I hope it is within the project)
+(use-package ripgrep
+  :ensure t
+  :bind ("C-c r" . projectile-ripgrep)
+  )
+
 ;; Really nice and powerful git integration.
 (use-package magit
   :ensure t
