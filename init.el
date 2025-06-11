@@ -204,12 +204,18 @@
   :ensure t
   :bind ("C-c g" . magit-status)
   )
+(use-package forge
+  :after magit
+  :config
+  (setq auth-sources '("~/.netrc"))
+  )
+
 
 ;; Python configuration.
 (use-package python
   :config
   (setq python-check-command "ruff")
-  (add-hook 'python-base-mode-hook 'eglot-ensure)
+  ;(add-hook 'python-base-mode-hook 'eglot-ensure)
   )
 
 ;; COMplete ANYthing. Integrates with LSP, but can also be used
@@ -323,6 +329,18 @@
   (interactive)
   (kill-buffer (current-buffer)))
 (global-set-key (kbd "C-x k") 'bjm/kill-this-buffer)
+
+
+;; Spelling + grammar checker.
+;; See https://github.com/emacs-languagetool/eglot-ltex-plus
+(use-package eglot-ltex-plus
+  :ensure t
+  ;; :hook (text-mode . (lambda ()
+  ;;                      (require 'eglot-ltex-plus)
+  ;;                      (eglot-ensure)))
+  :init
+  (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
+        eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
 
 
 ;; Have customize write its stuff to a separate file.

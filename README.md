@@ -1,6 +1,6 @@
-# .emacs.d: Emacs configuration
+# `.emacs.d`: Emacs configuration
 
-In december 2023, I started anew with my emacs configuration. I'm
+In December 2023, I started anew with my emacs configuration. I'm
 using emacs since around 1996, I think. So over the years I've
 accumulated quite some cruft, making a fresh start a bit of a
 necessity. And I wanted to modernize my way of working a bit by
@@ -37,7 +37,7 @@ in `pyproject.toml`:
     [tool.pyright]
     venv = "venv"
 
-Otherwise `pyrightconfig.json`:
+Otherwise, `pyrightconfig.json`:
 
     {"include": ["my_code_dir"],
      "extraPaths": ["lib/python3.11/site-packages/"]
@@ -50,7 +50,7 @@ Formatting, running the tests: I don't want to spend the time to
 configure that all in the LSP. In several modes, "projectile" is
 enabled, which can keep track of the project's root directory. From
 the root dir, I can then kick off some shell scripts (see
-https://github.com/reinout/tools/tree/master/shell#projectile-test ).
+https://github.com/reinout/tools/tree/master/shell#projectile-test).
 
 For instance `ctrl-c t` to run the tests, which runs
 `projectile-test`, see the documentation linked above for what it
