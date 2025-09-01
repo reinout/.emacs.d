@@ -233,6 +233,7 @@
          ("C-c l f f" . eglot-format)
          ("C-c l f b" . eglot-format-buffer)
          ("C-c l l" . eglot)
+         ("<mouse-3>" . eglot-code-actions)
          ("C-c l r n" . eglot-rename)
          ("C-c l s" . eglot-shutdown))
   )
