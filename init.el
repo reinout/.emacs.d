@@ -31,7 +31,7 @@
   )
 
 ;; exec-path-from-shell ensures the $PATH is set just like in your
-;; terminal. This helps finding pipx-installed tools when starting
+;; terminal. This helps finding 'uv tool'-installed tools when starting
 ;; emacs from your OS
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x))
@@ -125,6 +125,14 @@
   (yas-global-mode t)
   )
 
+;; Direnv loads env vars from .envrc, allowing me to customize the following three
+;; "projectile" helper commands with env vars like PROJECTILE_MAKE.
+(use-package direnv
+  :config
+  (direnv-mode)
+  (add-hook 'prog-mode-hook #'direnv--maybe-update-environment)
+  )
+
 (defun projectile-reinout-test ()
   "Run github.com/reinout/tools/shell/projectile-test in the project root"
   (interactive)
@@ -133,11 +141,11 @@
     )
   )
 
-(defun projectile-reinout-check ()
-  "Run github.com/reinout/tools/shell/projectile-check in the project root"
+(defun projectile-reinout-make ()
+  "Run github.com/reinout/tools/shell/projectile-compile in the project root"
   (interactive)
   (projectile-with-default-dir (projectile-acquire-root)
-    (compile "projectile-check")
+    (compile "projectile-make")
     )
   )
 
@@ -163,7 +171,7 @@
   ;;        )
   ;; Handy short keystrokes
   :bind (("C-c t" . projectile-reinout-test)
-         ("C-c c" . projectile-reinout-check)
+         ("C-c m" . projectile-reinout-make)
          ("C-c b" . projectile-reinout-beautiful)
          )
   :custom
@@ -208,15 +216,6 @@
 (use-package python
   :config
   (setq python-check-command "ruff")
-  ;(add-hook 'python-base-mode-hook 'eglot-ensure)
-  )
-
-;; COMplete ANYthing. Integrates with LSP, but can also be used
-;; outside it.
-(use-package company
-  :ensure t
-  :config
-  (global-company-mode t)
   )
 
 ;; LSP through eglot
@@ -229,7 +228,11 @@
          ("<mouse-3>" . eglot-code-actions)
          ("C-c l r n" . eglot-rename)
          ("C-c l s" . eglot-shutdown))
+  :config
+  (add-to-list 'eglot-server-programs
+               '(python-mode . ("ty" "server")))
   )
+
 
 ;; Dockerfile
 (use-package dockerfile-mode
@@ -244,8 +247,6 @@
 
 (use-package arduino-mode
   :ensure t
-  ;; Bind c-c t for easy compilation...
-  :bind (("C-c t" . compile))
   :mode "\\.ino\\'"
   :hook
   (arduino-mode . (lambda ()
