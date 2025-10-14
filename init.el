@@ -117,13 +117,6 @@
   :mode "\\.ya?ml\\'"
   )
 
-(use-package pdf-tools
-  :ensure t
-  :config
-  (pdf-loader-install)
-  )
-
-
 ;; Snippets (TODO: I need to add some of my own)
 (use-package yasnippet
   :ensure t
