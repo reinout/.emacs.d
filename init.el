@@ -258,6 +258,51 @@
   :mode "\\.mermaid\\'"
   )
 
+;; c-x k now directly kills the *current* buffer instead of asking you for the
+;; name of a buffer to kill
+;; See http://pragmaticemacs.com/emacs/dont-kill-buffer-kill-this-buffer-instead/
+(defun bjm/kill-this-buffer ()
+  "Kill the current buffer."
+  (interactive)
+  (kill-buffer (current-buffer)))
+(global-set-key (kbd "C-x k") 'bjm/kill-this-buffer)
+
+
+;; Spelling + grammar checker.
+;; See https://github.com/emacs-languagetool/eglot-ltex-plus
+(use-package eglot-ltex-plus
+  :ensure t
+  ;; :hook (text-mode . (lambda ()
+  ;;                      (require 'eglot-ltex-plus)
+  ;;                      (eglot-ensure)))
+  :init
+  (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
+        eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
+
+
+;; Have customize write its stuff to a separate file.
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file 'noerror))
+
+
+;; From https://stackoverflow.com/a/11059012/27401
+(defun bury-compile-buffer-if-successful (buffer string)
+ "Bury a compilation buffer if succeeded without warnings "
+ (when (and
+         (buffer-live-p buffer)
+         (string-match "compilation" (buffer-name buffer))
+         (string-match "finished" string)
+         (not
+          (with-current-buffer buffer
+            (goto-char (point-min))
+            (search-forward "warning" nil t))))
+    (run-with-timer 2 nil
+                    (lambda (buf)
+                      (bury-buffer buf)
+                      (switch-to-prev-buffer (get-buffer-window buf) 'kill))
+                    buffer)))
+
 
 ;; Generic emacs configuration.
 (use-package emacs
@@ -306,63 +351,19 @@
   ;; (until the first error).
   (setq compilation-scroll-output 'first-error)
 
+  ;; Allow setting the goal column.
+  (put 'set-goal-column 'disabled nil)
+
   ;; Place the something~ backup files in the temp dir.
   (setq backup-directory-alist
             `((".*" . ,temporary-file-directory)))
 
+  ;; Close the' ctrl-c b/t' beautify/test buffers when succesful.
+  (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
 
   :bind (("C-c s" . sort-lines)
          )
   )
 
-
-;; c-x k now directly kills the *current* buffer instead of asking you for the
-;; name of a buffer to kill
-;; See http://pragmaticemacs.com/emacs/dont-kill-buffer-kill-this-buffer-instead/
-(defun bjm/kill-this-buffer ()
-  "Kill the current buffer."
-  (interactive)
-  (kill-buffer (current-buffer)))
-(global-set-key (kbd "C-x k") 'bjm/kill-this-buffer)
-
-
-;; Spelling + grammar checker.
-;; See https://github.com/emacs-languagetool/eglot-ltex-plus
-(use-package eglot-ltex-plus
-  :ensure t
-  ;; :hook (text-mode . (lambda ()
-  ;;                      (require 'eglot-ltex-plus)
-  ;;                      (eglot-ensure)))
-  :init
-  (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
-        eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
-
-
-;; Have customize write its stuff to a separate file.
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file 'noerror))
-
 (provide 'init.el)
 ;;; init.el ends here
-
-(put 'set-goal-column 'disabled nil)
-
-
-;; From https://stackoverflow.com/a/11059012/27401
-(defun bury-compile-buffer-if-successful (buffer string)
- "Bury a compilation buffer if succeeded without warnings "
- (when (and
-         (buffer-live-p buffer)
-         (string-match "compilation" (buffer-name buffer))
-         (string-match "finished" string)
-         (not
-          (with-current-buffer buffer
-            (goto-char (point-min))
-            (search-forward "warning" nil t))))
-    (run-with-timer 2 nil
-                    (lambda (buf)
-                      (bury-buffer buf)
-                      (switch-to-prev-buffer (get-buffer-window buf) 'kill))
-                    buffer)))
-(add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
