@@ -57,9 +57,11 @@ For instance `ctrl-c t` to run the tests, which runs
 does. Normally, it will find your local `pytest` or it will run `make
 test`.
 
-`ctrl-c b`: code beautification.
+`ctrl-c b`: code Beautification.
 
-`ctrl-c c`: code checks.
+`ctrl-c t`: run Tests.
+
+`ctrl-c m`: run Makefile.
 
 
 ## Keybindings I want to remember
@@ -75,7 +77,5 @@ eldoc meer als popup configureren
 Misschien flymake in de marge laten vrutten?
 
 yasnippet aanzetten
-
-Projectile niet vergeten: kan ik ruff aanslingeren?
 
 imenu mooier

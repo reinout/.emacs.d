@@ -4,14 +4,15 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
+ '(eglot-autoshutdown t)
  '(inhibit-startup-screen t)
  '(kill-whole-line t)
  '(package-selected-packages
-   '(ag arduino-mode better-defaults buffer-env company deadgrep direnv dockerfile-mode
-        eglot-ltex-plus exec-path-from-shell flycheck-languagetool flymake-languagetool
-        forge git-commit lsp-mode lsp-pyright lsp-ui magit magit-section mermaid-mode
-        modus-themes pdf-tools pet pkg-info projectile python-pytest ripgrep
-        terraform-mode transient unfill visual-fill-column yaml-mode yaml-pro
+   '(ag arduino-mode better-defaults buffer-env company corfu deadgrep direnv
+        dockerfile-mode eglot-ltex-plus exec-path-from-shell flycheck-languagetool
+        flymake-languagetool forge git-commit lsp-pyright lsp-ui magit magit-section
+        mermaid-mode modus-themes pdf-tools pet pkg-info projectile python-pytest
+        ripgrep terraform-mode transient unfill visual-fill-column yaml-mode yaml-pro
         yasnippet-snippets))
  '(safe-local-variable-values
    '((projectile-project-compilation-cmd . "make install")
@@ -24,6 +25,7 @@
      (python-pytest-executable . "bin/pytest")
      (projectile-project-test-cmd . "docker compose run --rm web make test")
      (projectile-project-compilation-cmd . "docker compose build")))
+ '(sentence-end-double-space nil)
  '(split-height-threshold 200)
  '(use-package-enable-imenu-support t))
 (custom-set-faces

@@ -103,13 +103,24 @@
 ;; Let flymake use alt-n/alt-p for moving to the next/previous error.
 (use-package flymake
   :bind (("M-n" . flymake-goto-next-error)
-         ("M-p" . flymake-goto-previous-error))
+         ("M-p" . flymake-goto-prev-error))
   )
 
 ;; Yasnippet library
 (use-package yasnippet-snippets
   :ensure t
   )
+
+(use-package markdown-mode
+  :ensure t
+  ;; Retain flymake's two keys instead of using them for prev/next link.
+  :bind (:map markdown-mode-map
+         ("M-n" . nil)
+         ("M-p" . nil))
+  ;; :config ((require 'bind-key)
+  ;;          (unbind-key "M-n" markdown-mode-map)
+  ;;          (unbind-key "M-p" markdown-mode-map))
+)
 
 ;; Yaml editing
 (use-package yaml-mode
@@ -222,15 +233,75 @@
 (use-package eglot
   :bind (("C-c l c" . eglot-reconnect)
          ("C-c l d" . flymake-show-buffer-diagnostics)
-         ("C-c l f f" . eglot-format)
-         ("C-c l f b" . eglot-format-buffer)
+         ; ("C-c l f f" . eglot-format)
+         ; ("C-c l f b" . eglot-format-buffer)
          ("C-c l l" . eglot)
          ("<mouse-3>" . eglot-code-actions)
+         ("C-c c" . eglot-code-actions)
          ("C-c l r n" . eglot-rename)
-         ("C-c l s" . eglot-shutdown))
+         ("C-c l s" . eglot-shutdown)
+         ("C-c h" . eglot-inlay-hints-mode)
+         )
   :config
   (add-to-list 'eglot-server-programs
                '(python-mode . ("ty" "server")))
+  (add-to-list 'eglot-server-programs
+               '(conf-toml-mode . ("tombi" "lsp" "--no-cache")))
+  )
+
+
+;; Spelling + grammar checker.
+;; See https://github.com/emacs-languagetool/eglot-ltex-plus
+(use-package eglot-ltex-plus
+  :ensure t
+  ;; :hook (text-mode . (lambda ()
+  ;;                      (require 'eglot-ltex-plus)
+  ;;                      (eglot-ensure)))
+  :init
+  (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
+        eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
+
+;; (use-package flymake-languagetool
+;;   :ensure t
+;;   :hook ((text-mode       . flymake-languagetool-load)
+;;          (latex-mode      . flymake-languagetool-load)
+;;          (rst-mode        . flymake-languagetool-load)
+;;          (markdown-mode   . flymake-languagetool-load))
+;;   :init
+;;   ;; If using Premium Version provide the following information
+;;   (setq flymake-languagetool-server-jar nil)
+;;   (setq flymake-languagetool-url "https://api.languagetoolplus.com")
+;;   (setq flymake-languagetool-api-username "reinout@vanrees.org")
+;;   (setq flymake-languagetool-api-key "pit-mhchr3JWtcqb"))
+
+
+
+;; Completion interface.
+(use-package corfu
+  ;; Optional customizations
+  ;; :custom
+  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  :init
+
+  ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
+  ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
+  ;; variable `global-corfu-modes' to exclude certain modes.
+  (global-corfu-mode)
+
+  ;; Enable optional extension modes:
+  ;; (corfu-history-mode)
+  ;; (corfu-popupinfo-mode)
   )
 
 
@@ -266,18 +337,6 @@
   (interactive)
   (kill-buffer (current-buffer)))
 (global-set-key (kbd "C-x k") 'bjm/kill-this-buffer)
-
-
-;; Spelling + grammar checker.
-;; See https://github.com/emacs-languagetool/eglot-ltex-plus
-(use-package eglot-ltex-plus
-  :ensure t
-  ;; :hook (text-mode . (lambda ()
-  ;;                      (require 'eglot-ltex-plus)
-  ;;                      (eglot-ensure)))
-  :init
-  (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
-        eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
 
 
 ;; Have customize write its stuff to a separate file.
