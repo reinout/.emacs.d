@@ -7,13 +7,7 @@
  '(eglot-autoshutdown t)
  '(inhibit-startup-screen t)
  '(kill-whole-line t)
- '(package-selected-packages
-   '(ag arduino-mode better-defaults buffer-env company corfu deadgrep direnv
-        dockerfile-mode eglot-ltex-plus exec-path-from-shell flycheck-languagetool
-        flymake-languagetool forge git-commit lsp-pyright lsp-ui magit magit-section
-        mermaid-mode modus-themes pdf-tools pet pkg-info projectile python-pytest
-        ripgrep terraform-mode transient unfill visual-fill-column yaml-mode yaml-pro
-        yasnippet-snippets))
+ '(package-selected-packages nil)
  '(safe-local-variable-values
    '((projectile-project-compilation-cmd . "make install")
      (projectile-project-test-cmd . "make test")

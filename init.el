@@ -10,7 +10,7 @@
 ;; See the readme.
 
 ;;; Code:
-
+(require 'package)
 ;; Don't start every (previously installed) package right away.
 (setq package-enable-at-startup nil)
 ;; Use the standard melpa archive, too.
