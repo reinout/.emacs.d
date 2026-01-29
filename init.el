@@ -252,14 +252,14 @@
 
 ;; Spelling + grammar checker.
 ;; See https://github.com/emacs-languagetool/eglot-ltex-plus
-(use-package eglot-ltex-plus
-  :ensure t
-  ;; :hook (text-mode . (lambda ()
-  ;;                      (require 'eglot-ltex-plus)
-  ;;                      (eglot-ensure)))
-  :init
-  (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
-        eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
+;; (use-package eglot-ltex-plus
+;;   :ensure t
+;;   ;; :hook (text-mode . (lambda ()
+;;   ;;                      (require 'eglot-ltex-plus)
+;;   ;;                      (eglot-ensure)))
+;;   :init
+;;   (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
+;;         eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
 
 ;; (use-package flymake-languagetool
 ;;   :ensure t
@@ -273,6 +273,25 @@
 ;;   (setq flymake-languagetool-url "https://api.languagetoolplus.com")
 ;;   (setq flymake-languagetool-api-username "reinout@vanrees.org")
 ;;   (setq flymake-languagetool-api-key "pit-mhchr3JWtcqb"))
+
+(use-package languagetool
+  :ensure t
+  ;; :defer t
+  :commands (languagetool-check
+             languagetool-clear-suggestions
+             languagetool-correct-at-point
+             languagetool-correct-buffer
+             languagetool-set-language
+             languagetool-server-mode
+             languagetool-server-start
+             languagetool-server-stop
+             )
+  :init
+  (setq languagetool-server-url "https://api.languagetoolplus.com"
+        languagetool-server-port 443
+        languagetool-api-key "pit-mhchr3JWtcqb"
+        languagetool-username "reinout@vanrees.org")
+  )
 
 
 
