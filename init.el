@@ -98,7 +98,20 @@
 (use-package editorconfig
   :ensure t
   :config
-  (editorconfig-mode 1))
+  (editorconfig-mode 1)
+  (defun editorconfig--get-indentation-web-mode (size)
+    `((web-mode-indent-style . 2)
+      ;; (web-mode-attr-indent-offset       . ,size)
+      ;; (web-mode-attr-value-indent-offset . ,size)
+      (web-mode-code-indent-offset       . ,size)
+      (web-mode-css-indent-offset        . ,size)
+      (web-mode-markup-indent-offset     . ,size)
+      (web-mode-sql-indent-offset        . ,size)
+      (web-mode-block-padding            . ,size)
+      (web-mode-script-padding           . ,size)
+      (web-mode-style-padding            . ,size)))
+
+  )
 
 ;; Let flymake use alt-n/alt-p for moving to the next/previous error.
 (use-package flymake
@@ -227,6 +240,18 @@
 (use-package python
   :config
   (setq python-check-command "ruff")
+  )
+
+;; Web html editing
+(use-package web-mode
+  :ensure t
+  :mode
+  (("\\.php\\'" . web-mode)
+   ("\\.html\\'" . web-mode))
+  :config
+  (setq web-mode-engines-alist
+        '(("django"    . "\\.html\\'"))
+        )
   )
 
 ;; LSP through eglot

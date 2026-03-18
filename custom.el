@@ -7,10 +7,7 @@
  '(eglot-autoshutdown t)
  '(inhibit-startup-screen t)
  '(kill-whole-line t)
- '(package-selected-packages
-   '(ag arduino-mode better-defaults corfu direnv dockerfile-mode exec-path-from-shell
-        forge languagetool magit markdown-mode mermaid-mode modus-themes projectile
-        ripgrep terraform-mode unfill visual-fill-column yaml-mode yasnippet-snippets))
+ '(package-selected-packages nil)
  '(safe-local-variable-values
    '((projectile-project-compilation-cmd . "make install")
      (projectile-project-test-cmd . "make test")
