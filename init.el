@@ -228,6 +228,16 @@
 (use-package magit
   :ensure t
   :bind ("C-c g" . magit-status)
+  :config
+  ;; https://emacs.stackexchange.com/a/85158/10825
+  (defun maybe-git-commit-signoff ()
+    "Potentially add a Signed-off-by trailer.
+
+    Run \"git config set --local emacs.signOff true\" in a repository if you are
+    sure it will always be appropriate to sign-off commits to it by default."
+    (when (magit-git-config-p "emacs.signOff")
+      (apply 'git-commit-signoff (git-commit-get-ident "Signed-off-by"))))
+  (add-hook 'git-commit-setup-hook 'maybe-git-commit-signoff)
   )
 (use-package forge
   :after magit
