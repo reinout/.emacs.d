@@ -310,6 +310,7 @@
 ;;   (setq flymake-languagetool-api-key "pit-mhchr3JWtcqb"))
 
 (use-package languagetool
+  ;; See https://github.com/PillFall/languagetool.el
   :ensure t
   ;; :defer t
   :commands (languagetool-check
