@@ -278,8 +278,10 @@
          ("C-c h" . eglot-inlay-hints-mode)
          )
   :config
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-mode . ("ty" "server")))
   (add-to-list 'eglot-server-programs
-               '(python-mode . ("ty" "server")))
+               '((python-mode python-ts-mode) . ("zuban" "server")))
   (add-to-list 'eglot-server-programs
                '(conf-toml-mode . ("tombi" "lsp" "--no-cache")))
   )
