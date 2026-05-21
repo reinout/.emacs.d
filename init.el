@@ -16,12 +16,6 @@
 ;; Use the standard melpa archive, too.
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
-;; Add one for the ltex eglot package
-;; (add-to-list 'package-archives
-;;              '( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
-;; (setq package-archive-priorities '(("gnu"      . 0)
-;;                                    ("melpa"    . 0)
-;;                                    ("jcs-elpa" . 5)))
 
 ;; Download package info when it didn't happen yet.
 (when (not package-archive-contents)
@@ -293,39 +287,6 @@
                '(conf-toml-mode . ("tombi" "lsp" "--no-cache")))
   )
 
-;; (use-package eglot-ltex-plus
-;;   :ensure t
-;;   :hook (text-mode . (lambda ()
-;;                        (require 'eglot-ltex-plus)
-;;                        (eglot-ensure)))
-;;   :init
-;;   (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
-;;         eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
-
-
-;; Spelling + grammar checker.
-;; See https://github.com/emacs-languagetool/eglot-ltex-plus
-;; (use-package eglot-ltex-plus
-;;   :ensure t
-;;   ;; :hook (text-mode . (lambda ()
-;;   ;;                      (require 'eglot-ltex-plus)
-;;   ;;                      (eglot-ensure)))
-;;   :init
-;;   (setq eglot-ltex-plus-server-path "/opt/homebrew/bin/ltex-ls-plus"
-;;         eglot-ltex-plus-communication-channel 'stdio))         ; 'stdio or 'tcp
-
-;; (use-package flymake-languagetool
-;;   :ensure t
-;;   :hook ((text-mode       . flymake-languagetool-load)
-;;          (latex-mode      . flymake-languagetool-load)
-;;          (rst-mode        . flymake-languagetool-load)
-;;          (markdown-mode   . flymake-languagetool-load))
-;;   :init
-;;   ;; If using Premium Version provide the following information
-;;   (setq flymake-languagetool-server-jar nil)
-;;   (setq flymake-languagetool-url "https://api.languagetoolplus.com")
-;;   (setq flymake-languagetool-api-username "reinout@vanrees.org")
-;;   (setq flymake-languagetool-api-key "pit-mhchr3JWtcqb"))
 
 (use-package languagetool
   ;; See https://github.com/PillFall/languagetool.el
@@ -341,11 +302,6 @@
              languagetool-server-stop
              )
   :init
-  ;; (setq languagetool-server-url "https://api.languagetoolplus.com"
-  ;;       languagetool-server-port 443
-  ;;       languagetool-api-key "pit-mhchr3JWtcqb"
-  ;;       languagetool-username "reinout@vanrees.org")
-  ;; )
   (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8"))
   (setq languagetool-console-command "/opt/homebrew/Cellar/languagetool/6.8/libexec/languagetool-commandline.jar")
 )
