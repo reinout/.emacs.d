@@ -182,6 +182,12 @@
     )
   )
 
+(defun reinout-ltex ()
+  "Run ltex-cli-plus on the current file"
+  (interactive)
+  (save-buffer)
+  (compile (concat "ltex-cli-plus --client-configuration=languagetool.json " (buffer-file-name)))
+  )
 
 ;; Projectile (project support) installation.
 (use-package projectile
@@ -263,6 +269,17 @@
   (setq web-mode-engines-alist
         '(("django"    . "\\.html\\'"))
         )
+  )
+
+;; Better css color support
+(use-package colorful-mode
+  :ensure t
+  :custom
+  ;(colorful-use-prefix t)
+  (colorful-only-strings 'only-prog)
+  (css-fontify-colors nil)
+  :config
+  (global-colorful-mode t)
   )
 
 ;; LSP through eglot

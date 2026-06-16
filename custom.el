@@ -9,7 +9,8 @@
  '(kill-whole-line t)
  '(package-selected-packages nil)
  '(safe-local-variable-values
-   '((projectile-project-compilation-cmd . "make install")
+   '((web-mode-indent-style . 2) (web-mode-block-padding . 2) (web-mode-script-padding . 2)
+     (web-mode-style-padding . 2) (projectile-project-compilation-cmd . "make install")
      (projectile-project-test-cmd . "make test")
      (projectile-project-compilation-cmd . "make")
      (projectile-project-test-cmd . "bin/pytest")
